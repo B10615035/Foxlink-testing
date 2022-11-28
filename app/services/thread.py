@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 
 # class WorkerThread(threading.Thread):
 class WorkerThread(Process):
-    def __init__(self, username, behavier):
+    def __init__(self, username, behavier, id):
         super(WorkerThread,self).__init__()
         self.logger = logging.getLogger(username)
         self.username = username
@@ -22,6 +22,7 @@ class WorkerThread(Process):
         self.mission_id = 0
         self.topic = None
         self.client = None
+        self.id = id
 
     def mqtt(self, action):
 
@@ -74,8 +75,10 @@ class WorkerThread(Process):
             response_time = self.behavier[i]['response_time']
             timeout = 60 # seconds
             self.logger.info(f"action:{action} begin to with timeout({timeout})")
+
+            time.sleep(response_time)
             if action == 'login':
-                status, self.token = login(self.username,timeout)
+                status, self.token = login(self.username,self.id,timeout)
 
             elif action == 'logout':
                 status = logout(self.token,self.username,timeout=timeout)
@@ -106,7 +109,5 @@ class WorkerThread(Process):
             if status and status >= 200 and status <= 299:
                 self.logger.info(f"action:{action} completed.")
                 i += 1
-
-            time.sleep(response_time)
 
         self.logger.info("completed all tasks, leaving")

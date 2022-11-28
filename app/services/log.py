@@ -24,6 +24,7 @@ def create_log(param):
             CONNECTION = mysql.connector.connect(
             host = FOXLINK_DATABASE_HOST,
             database = FOXLINK_DATABASE_NAME,
+            port = 27002,
             user = FOXLINK_DATABASE_USER,
             password = FOXLINK_DATABASE_PASSWORD)
             
@@ -35,9 +36,8 @@ def create_log(param):
             cursor.execute(mySql_insert_query)
             CONNECTION.commit()
             cursor.close()
-        except:
-            pass
-            # logging.warning(f"{param['username']} can't create log")
+        except Exception as e:
+            logging.warning(e)
     
 def kill_process():
     connection = mysql.connector.connect(

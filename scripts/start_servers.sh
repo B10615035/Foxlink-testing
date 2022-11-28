@@ -1,0 +1,2 @@
+bash start_servers_foxlink.sh
+bash start_servers_api.sh
