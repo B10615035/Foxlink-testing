@@ -1,5 +1,6 @@
 . scripts/envs.sh
 set -a
-SCENARIO="test6"
-SCENARIO_DB_TAG="test6"
+IS_APP=1
+SCENARIO="EventEnd"
+SCENARIO_DB_TAG="import_device_and_factorymaps"
 set +a

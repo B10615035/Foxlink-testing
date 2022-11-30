@@ -1,30 +1,30 @@
 . scripts/testings/envs.sh
 
-if [[ $1 == "local" ]];
-then
+# if [[ $1 == "local" ]];
+# then
 
-    # reset foxlink database
-    bash scripts/systems/clean_server.sh db
-    bash scripts/systems/start_server.sh db $SCENARIO_DB_TAG
+#     # reset foxlink database
+#     bash scripts/systems/clean_server.sh db
+#     bash scripts/systems/start_server.sh db $SCENARIO_DB_TAG
 
-    # reset mqtt server
-    bash scripts/systems/clean_server.sh emqx
-    bash scripts/systems/start_server.sh emqx
+#     # reset mqtt server
+#     bash scripts/systems/clean_server.sh emqx
+#     bash scripts/systems/start_server.sh emqx
 
-elif [[ $1 == "remote" ]];
-then
+# elif [[ $1 == "remote" ]];
+# then
 
-    # reset foxlink database
-    bash scripts/systems/clean_server.sh db
-    bash scripts/systems/start_server.sh db $SCENARIO_DB_TAG
+#     # reset foxlink database
+#     bash scripts/systems/clean_server.sh db
+#     bash scripts/systems/start_server.sh db $SCENARIO_DB_TAG
 
-    # reset all remote servers (emqx, backend,api-db)
-    bash scripts/testings/restart_servers.sh
+#     # reset all remote servers (emqx, backend,api-db)
+#     bash scripts/testings/restart_servers.sh
 
-else
-    echo "please specify the valid condition..."
-    exit 0
-fi
+# else
+#     echo "please specify the valid condition..."
+#     exit 0
+# fi
 
 
 sleep 2
@@ -40,10 +40,19 @@ then
     # create time
     python -m app.utils.create_time -f $SCENARIO -s "$SHIFT_TIME_T2"
 else
-    # create time
-    python -m app.utils.create_time -f $SCENARIO -b 150
+
+    if [ $IS_APP -eq "1" ];
+    then
+        echo "running app scenario"
+        python -m app.CreateTime_APP
+        # run test case
+        python -m app.execute "${SCENARIO}_time"
+        
+    else
+        # create time
+        python -m app.utils.create_time -f $SCENARIO -b 150
+        # run test case
+        python -m app.execute $SCENARIO
+    fi
 fi
 
-
-# run test case
-python -m app.execute $SCENARIO
