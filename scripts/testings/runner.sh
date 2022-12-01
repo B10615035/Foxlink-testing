@@ -3,13 +3,13 @@
 # if [[ $1 == "local" ]];
 # then
 
-#     # reset foxlink database
-#     bash scripts/systems/clean_server.sh db
-#     bash scripts/systems/start_server.sh db $SCENARIO_DB_TAG
+# reset foxlink database
+bash scripts/systems/clean_server.sh db
+bash scripts/systems/start_server.sh db $SCENARIO_DB_TAG
 
-#     # reset mqtt server
-#     bash scripts/systems/clean_server.sh emqx
-#     bash scripts/systems/start_server.sh emqx
+# reset mqtt server
+bash scripts/systems/clean_server.sh emqx
+bash scripts/systems/start_server.sh emqx
 
 # elif [[ $1 == "remote" ]];
 # then
@@ -46,7 +46,7 @@ else
         echo "running app scenario"
         python -m app.CreateTime_APP
         # run test case
-        python -m app.execute "${SCENARIO}_time"
+        python -m app.execute "${SCENARIO}_time" -n 100
         
     else
         # create time
