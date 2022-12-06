@@ -9,15 +9,14 @@ incubator(){
         IMAGE="incubator:$1"
     fi
 
-    bash scripts/server_exec.sh\
-    "docker run -dt \
+    docker run -dt \
         -v $BACKEND_SERVER_DOCKER_CONTEXT:/code/ \
         --env-file "$BACKEND_SERVER_DOCKER_CONTEXT/.env" \
         -p 8080:80 \
         --network $DOCKER_NETWORK \
         --name incubator \
         $IMAGE \
-        python -m app.server_uvicorn"
+        python -m app.server_uvicorn
 
 }
 
@@ -30,26 +29,24 @@ db(){
         IMAGE="mysql-test:$1"
     fi
     
-    bash scripts/server_exec.sh \
-    "docker run -dt \
+    docker run -dt \
         -p 27001:3306 \
         -e MYSQL_DATABASE=foxlink \
         -e MYSQL_ROOT_PASSWORD=AqqhQ993VNto \
         --name mysql-test \
         --network $DOCKER_NETWORK \
-        $IMAGE"
+        $IMAGE
 
 }
 
 emqx(){
-    bash scripts/server_exec.sh \
-    "docker run -dt \
+    docker run -dt \
         -p 18083:18083 \
         -p 1883:1883 \
         -p 8083:8083 \
         --name emqx-test \
         --network $DOCKER_NETWORK\
-        emqx/emqx"
+        emqx/emqx
 }
 
 if [[ $1 == "incubator" ]];
