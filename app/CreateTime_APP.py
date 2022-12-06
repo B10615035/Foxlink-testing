@@ -19,7 +19,7 @@ class CreateTime_APP():
         self.start = start 
         self.now = datetime.now() 
         self.event_start_time = datetime.now() + timedelta(seconds=self.start) 
-        self.interval = 60
+        self.interval = 120
 
     # load test file
     def load_data(self):

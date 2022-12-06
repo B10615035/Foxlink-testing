@@ -1,7 +1,9 @@
 from pymysql import NULL
 from paho.mqtt import client as mqtt_client
 from datetime import datetime
-import time, json, uuid
+import time
+import json
+import uuid
 
 
 def on_connect(client, userdata, flags, rc):
@@ -18,6 +20,7 @@ def connect_mqtt(client_id) -> mqtt_client:
     client.connect('127.0.0.1', 1883)
     return client
 
+
 def subscribe(client_id, username, action, response_time):
     mission_id = None
 
@@ -33,13 +36,14 @@ def subscribe(client_id, username, action, response_time):
         print(username)
         print(info)
 
-        mission_id = json.loads(info)['mission_id']
         client.disconnect()
 
     client = connect_mqtt(client_id)
-    client.subscribe([(f"foxlink/users/1/move-rescue-station", 2)])
+    client.subscribe([(f"foxlink/users/L0001/subordinate-rejected", 2)])
+    # client.subscribe([(f"foxlink/users/1/move-rescue-station", 2)])
     client.on_message = on_message
     client.loop_forever()
     return mission_id
+
 
 subscribe(str(uuid.uuid4()), 'C0001', 'hello', 1)

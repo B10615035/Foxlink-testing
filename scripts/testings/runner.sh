@@ -5,6 +5,7 @@
 
 # reset foxlink database
 bash scripts/systems/clean_server.sh db
+
 bash scripts/systems/start_server.sh db $SCENARIO_DB_TAG
 
 # reset mqtt server
@@ -47,7 +48,7 @@ else
         python -m app.CreateTime_APP
         # run test case
         python -m app.execute "${SCENARIO}_time" -n 100
-        
+    
     else
         # create time
         python -m app.utils.create_time -f $SCENARIO -b 150
