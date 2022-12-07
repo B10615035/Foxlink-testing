@@ -245,8 +245,6 @@ def update_shift(current_shift_type):
         
         set_shift_time(current_shift_type, time1, time2)
         current_shift_type = get_shift_type()
-        set_shift_time(current_shift_type, time2, time1)
-
     return current_shift_type
 
 def check_user_status(current_shift_type, worker_shift_type, worker_uuid):
