@@ -204,7 +204,7 @@ def take_action(action, mission_id, topic):
                 topic_results[topic].pop(0)
             break
         else:
-            time.sleep(2)
+            time.sleep(5)
 
 def get_status_info(status, fail_count):
     if status and status >= 200 and status <= 299:
@@ -266,6 +266,8 @@ def check_user_status(current_shift_type, worker_shift_type, worker_uuid):
             if is_success:
                 token = None
                 break
+            else:
+                time.sleep(5)
             
     return current_shift_type
     
@@ -376,12 +378,6 @@ def worker(_username, _behavier, _id, speed=1):
                 status = mission_action(token, mission_id, action, username, timeout=timeout)
 
             logger.info(f"ended {action} with status:{status}")
-            
-            # is_success, fail_count = get_status_info(status, fail_count, action)
-            # is_success = True
-            # if is_success:
-            #     logger.info(f"action:{action} completed.")
-            #     i += 1
 
             if status and 200 <= status and status <= 299:
                 logger.info(f"action:{action} completed.")
