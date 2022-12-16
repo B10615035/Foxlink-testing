@@ -21,6 +21,10 @@ RUN apt-get install libmariadb-dev -y
 RUN apt-get install gcc -y 
 #
 RUN apt-get install net-tools -y
+#
+RUN apt-get install git
+#
+RUN apt-get install iputils-ping
 # 
 COPY requirements.txt /app/
 # 
