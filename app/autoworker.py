@@ -6,6 +6,7 @@ if __name__ == '__main__':
     worker_thread = []
 
     for i in range(THREAD_NUMBER):
+        #66個員工分開處理
         worker_thread.append(WorkerThread(user_id=i + 1))
         worker_thread[i].start()
     

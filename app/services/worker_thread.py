@@ -20,18 +20,18 @@ class WorkerThread(threading.Thread):
     def update_shift(self):
         hour = (datetime.utcnow() + timedelta(hours=8)).hour
         # minute = (datetime.utcnow() + timedelta(hours=8)).minute
-        
+        #取得日班或夜班
         if self.shift_type != self.get_shift_type():
             time1 = f'{(hour+1)%24}:00:00'
             time2 = f'{hour%24}:00:00'
             
             # time1 = f'{hour}:{minute+5}:00'
             # time2 = f'{hour}:{minute}:00'
-            
+            # userid = 1 check
             if self.user_id == 1: set_shift_time(self.shift_type, time1, time2)
             self.shift_type = self.get_shift_type()
             if self.user_id == 1: set_shift_time(self.shift_type, time2, time1)
-            
+            # 產生log
             create_log(
                 param = {
                     'mission_id': NULL,
@@ -45,15 +45,16 @@ class WorkerThread(threading.Thread):
             )
             
             fail_count = 0
+            # 如果有token logout
             if self.token:
                 while True:
                     is_success, fail_count = self.get_logout_status(logout(self.token, self.username), fail_count)
                     if is_success: break
-                    
+             
             self.token = None
             self.mission_id = None
             
-
+    # 取得日班或夜班
     def get_shift_type(self):
         if datetime.utcnow().hour % 2 == 0:
             return 0
@@ -62,7 +63,7 @@ class WorkerThread(threading.Thread):
         # if datetime.utcnow().minute %5 == 0:
         #     return 0
         # return 1
-
+    # 取得工人行為 小於等於90接受 91~95拒絕 大於95 無動作
     def get_action(self):
         r = random.randint(1, 100)
         
@@ -73,10 +74,10 @@ class WorkerThread(threading.Thread):
             return "reject"
         
         return None
-
+    #取得反應時間 5-240
     def get_response_time(self):
         return random.randint(RESPONSE_START, RESPONSE_END)
-    
+    # logout狀態
     def get_logout_status(self, status, fail_count):
         if status and status == 200:
             return True, 0
@@ -86,22 +87,25 @@ class WorkerThread(threading.Thread):
             return True, 0
         
         return False, fail_count
-    
+    # check user資料
     def check_user_info(self):
+        # 如果沒有token
         if not self.token:
             self.username = 'C{}{}'.format(self.get_shift_type(), str(self.user_id).zfill(3))
             self.topic_mission = f'foxlink/users/{self.user_id}/missions'
             self.topic_rescue = f'foxlink/users/{self.user_id}/move-rescue-station'
             while True:
+                # 進行login
                 status, self.token = login(self.username, self.user_id)
                 if status and status == 200:
                     break
-
+    # 
     def take_action(self, action):
         time.sleep(self.get_response_time())
+        # 任務的動作進行變更
         status = mission_action(self.token, self.mission_id, action, self.username)
 
-
+    # mqtt連接?
     def mqtt(self):
         def on_message(client, userdata, msg):
             info = msg.payload.decode()

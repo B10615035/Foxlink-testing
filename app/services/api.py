@@ -87,7 +87,7 @@ def logout(token, username, reason='OffWork', timeout=60, logger=logging):
 
     return status
 
-
+# 任務的動作進行變更
 def mission_action(token, mission_id, action, username, timeout=60, logger=logging):
     status = None
     result = None
@@ -144,6 +144,7 @@ def set_shift_time(did, date1, date2, timeout=60, logger=logging):
         "shift_end_time": str(date2)
     }
     try:
+        # get 檢查
         r = requests.get(
             f'{SERVER_URL}/shift/update',
             params=data,

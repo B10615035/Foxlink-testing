@@ -1,7 +1,7 @@
 import json
 import os
 
-
+#os.getcwd 顯示當前目錄
 CURRENT_PATH = os.getcwd()
 
 FOXLINK_DATABASE_HOST = os.getenv("FOXLINK_DATABASE_HOST")
