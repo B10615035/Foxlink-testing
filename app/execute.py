@@ -29,7 +29,7 @@ def entry_point():
 
     for p in processes:
         p.start()
-        time.sleep(0.1)
+        time.sleep(0.15)
 
     event_generator = multiprocessing.Process(target=fevents.entry_point)
     event_generator.start()

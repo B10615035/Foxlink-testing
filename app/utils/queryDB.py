@@ -26,7 +26,7 @@ def query_testing(query):
 def query_server(query):
     connection = mysql.connector.connect(
     host = FOXLINK_DATABASE_HOST,
-    database = 'testing_api',
+    database = 'foxlink',
     user = FOXLINK_DATABASE_USER,
     password = FOXLINK_DATABASE_PASSWORD,
     port=FOXLINK_DATABASE_PORT,

@@ -173,7 +173,7 @@ def mqtt_get(action, topic):
 
         # result = topic_results[topic].pop(0)
         result = topic_results[topic][0]
-
+        
     if result:
         create_log(
             param={
@@ -191,9 +191,10 @@ def mqtt_get(action, topic):
 
 
 def mqtt_sync(status, topic):
+    # 測試mission自動刪除
     global topic_results
     if (status and status >= 200 and status <= 299):
-        topic_results[topic].pop(0)
+            topic_results[topic].pop(0)
 
 
 client = None
@@ -263,13 +264,13 @@ def check_user_status(current_shift_type, worker_shift_type, worker_uuid):
     
     current_shift_type = update_shift(current_shift_type)
     
-    if not token and  current_shift_type == worker_shift_type:
+    if token is None and  current_shift_type == worker_shift_type:
         while True:
             status, token = login(username, worker_uuid, timeout)
             if status and status >= 200 and status < 299:
                 break
             
-    if token and current_shift_type != worker_shift_type:
+    if token is not None  and current_shift_type != worker_shift_type:
         fail_count = 0
         while True:
             is_success, fail_count = get_status_info(logout(token, username, timeout=timeout), fail_count)
@@ -309,11 +310,16 @@ def worker(_username, _behavier, _id, speed=1):
         if SCENARIO == "test8":
             current_shift_type = (get_shift_type() + 1) % 2
             while True:
+                # 這邊登出 導致token移除
                 current_shift_type = check_user_status(current_shift_type, worker_shift_type=behavier[0]['api'], worker_uuid=worker_uuid)
                 action = get_action()
                 topic = f'foxlink/users/{worker_uuid}/missions'
                 mission_id = mqtt_get(action, topic)
-                if mission_id:
+                # 自動結案處理(？
+                if token is None:
+                    topic_results[topic]=[]
+                    mission_id=""
+                if mission_id and token is not None:
                     if action == "accept":
                         take_action("accept", mission_id, topic)
                         take_action("start", mission_id, topic)
@@ -332,13 +338,16 @@ def worker(_username, _behavier, _id, speed=1):
                                 'time': datetime.utcnow(),
                             }
                         )
-
+                
+                # 回去待命
                 topic = f'foxlink/users/{worker_uuid}/move-rescue-station'
                 action = "start"
                 mission_id = mqtt_get(action, topic)
-                if mission_id:
+                if token is None:
+                    mission_id=""
+                if mission_id and token is not None:
                     take_action(action, mission_id, topic)
-                    
+                
                 time.sleep(10)
         else:
             i = 0

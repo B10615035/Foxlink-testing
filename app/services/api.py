@@ -26,9 +26,10 @@ def login(username, id, timeout=60, logger=logging):
         'password': PASSWORD,
         'client_id': id
     }
-
+    logger.info(f"payloads check !:{payloads}")
     try:
         r = requests.post(f'{SERVER_URL}/auth/token', data=payloads, timeout=timeout)
+        logger.debug(f"r value:{r}")
         token = r.json()['access_token']
         status = r.status_code
     except ConnectionResetError as e:
@@ -106,7 +107,6 @@ def mission_action(token, mission_id, action, username, timeout=60, logger=loggi
             r = requests.post(f'{SERVER_URL}/missions/{mission_id}/finish', headers=header, timeout=timeout)
         else:
             logger.warning(f"[mission action]unknown action: {action}")
-
         status = r.status_code
 
     except ConnectionResetError as e:
@@ -116,10 +116,12 @@ def mission_action(token, mission_id, action, username, timeout=60, logger=loggi
         logger.info(e)
 
     try:
+        # logger.warning(f"before dump r value:{r.json()}")
         result = json.dumps(r.json())
-    except Exception as e:
+    except Exception as e: # 這裡很常出錯
+        logger.warning(f"username:{username},mission_id:{mission_id},action:{action},token:{token}")
         logger.warning(f"can't dump result of action({action}), exception occur.")
-        logger.info(e)
+        logger.info(e) 
 
     create_log(
         param={
